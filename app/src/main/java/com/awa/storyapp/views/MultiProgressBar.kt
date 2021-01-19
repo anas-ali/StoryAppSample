@@ -30,9 +30,9 @@ class MultiProgressBar @JvmOverloads constructor(
     private var progressPadding: Float
     private var progressWidth = 10F
     private var singleProgressWidth: Float = 0F
-    private var countOfProgressSteps: Int = 1
+    var countOfProgressSteps: Int = 1
     private var isNeedRestoreProgressAfterRecreate: Boolean = false
-    public var singleDisplayedTime: Float = 1F
+    var singleDisplayedTime: Float = 1F
 
     private var stepChangeListener: ProgressStepChangeListener? = null
     private var progressPercents: Int
