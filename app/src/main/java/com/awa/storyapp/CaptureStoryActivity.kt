@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +19,11 @@ import androidx.core.content.ContextCompat
 import com.hluhovskyi.camerabutton.CameraButton
 import java.io.File
 
-class MainActivity : AppCompatActivity() {
+class CaptureStoryActivity : AppCompatActivity() {
     private lateinit var cameraView: CameraView
 
     private lateinit var recordFiles: Array<File>
     private lateinit var storageDirectory: File
-    private lateinit var videoRecordingFilePath: String
     private val permissionsArray = arrayOf(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.CAMERA,
@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setStorageDetails() {
         storageDirectory = recordFiles[0]
-        videoRecordingFilePath =
-            "${storageDirectory.absoluteFile}/${System.currentTimeMillis()}_video.mp4"
     }
 
     private fun setVideoButtonListener() {
@@ -56,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             CameraButton.OnVideoEventListener {
             override fun onFinish() { cameraView.stopRecording() }
             override fun onCancel() {}
-            override fun onStart() { recordVideo(videoRecordingFilePath) }
+            override fun onStart() { recordVideo("${storageDirectory.absoluteFile}/${System.currentTimeMillis()}_video.mp4") }
         })
     }
 
@@ -83,18 +81,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun recordVideo(videoRecordingFilePath: String) {
+        Log.e("uuu u3", videoRecordingFilePath)
         cameraView.startRecording(
             File(videoRecordingFilePath),
             ContextCompat.getMainExecutor(this),
             object : OnVideoSavedCallback {
                 override fun onVideoSaved(outputFileResults: OutputFileResults) {
-                    val intent = Intent(this@MainActivity, VideoRecordingActivity::class.java)
+                    val intent = Intent(this@CaptureStoryActivity, ViewStoriesActivity::class.java)
                     intent.putExtra("video", outputFileResults.savedUri?.getPath())
                     startActivity(intent)
                 }
                 override fun onError(videoCaptureError: Int, message: String, cause: Throwable?) {
                     Toast.makeText(
-                        this@MainActivity,
+                        this@CaptureStoryActivity,
                         "Recording Error $message",
                         Toast.LENGTH_SHORT
                     ).show()

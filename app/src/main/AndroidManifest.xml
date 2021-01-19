@@ -28,7 +28,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".MainActivity"
+        <activity android:name=".CaptureStoryActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".VideoRecordingActivity"
+        <activity android:name=".ViewStoriesActivity"
             android:screenOrientation="portrait">
         </activity>
     </application>

@@ -8,15 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awa.storyapp.views.MultiProgressBar
 import java.io.File
 
-class VideoRecordingActivity  : AppCompatActivity() {
+class ViewStoriesActivity : AppCompatActivity() {
 
-    private lateinit var videoView : VideoView
+    private lateinit var videoView: VideoView
     private lateinit var progresView: MultiProgressBar
-    private lateinit var filePath: String
     private lateinit var files: Array<File>
     private var count = 0
+    private var videoCount = 0
 
-    val data = "/storage/emulated/0/Android/data/com.awa.storyapp/files/Movies/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +23,6 @@ class VideoRecordingActivity  : AppCompatActivity() {
         setContentView(R.layout.activity_video)
         initViews()
         readFileContent()
-        readVideoPathFromExtras()
-
-
     }
 
     private fun initViews() {
@@ -37,32 +33,24 @@ class VideoRecordingActivity  : AppCompatActivity() {
     private fun readFileContent() {
         val file = File("/storage/emulated/0/Android/data/com.awa.storyapp/files/Movies")
         files = file.listFiles()
+        Log.e("uuu 39", files.toString())
         count = files.size
-    }
-
-    private fun readVideoPathFromExtras() {
-        intent.extras?.getString("video")?.let {
-            filePath = it
-            playVideo(it)
-        }
+        playVideo(files[videoCount++].path)
     }
 
     private fun playVideo(path: String) {
-
-        if(count > 0) {
-            progresView.countOfProgressSteps = files.size
-
-            videoView.setVideoPath(path);
-            videoView.setOnPreparedListener {
-                progresView.singleDisplayedTime = (it.duration.toLong() / 1000).toFloat()
-                progresView.start()
-            }
-            videoView.setOnCompletionListener {
-                playVideo(files[count].path)
-            }
-            videoView.start();
-
-            count--
+        progresView.countOfProgressSteps = files.size
+        videoView.setVideoPath(path)
+        videoView.setOnPreparedListener {
+            val videoLength = (it.duration.toLong() / 1000).toFloat()
+            Log.e("uuu 46", " " + videoLength)
+            progresView.singleDisplayedTime = videoLength
+            progresView.start()
         }
+        videoView.setOnCompletionListener {
+            if (videoCount < count)
+                playVideo(files[videoCount++].path)
+        }
+        videoView.start();
     }
 }
